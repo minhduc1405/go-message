@@ -3,13 +3,13 @@ package config
 import (
 	"context"
 	"reflect"
-	"time"
 
+	"github.com/common-go/amq"
 	"github.com/common-go/health"
 	"github.com/common-go/mongo"
 	"github.com/common-go/mq"
-	"github.com/common-go/pubsub"
 	v "github.com/common-go/validator"
+	"github.com/go-stomp/stomp"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -28,12 +28,14 @@ func NewApplicationContext(ctx context.Context, root Root) (*ApplicationContext,
 		return nil, err
 	}
 
-	consumer, err := pubsub.NewConsumerByConfig(ctx, root.PubSubConsumer, true)
+	consumer, err := amq.NewConsumerByConfig(root.Amq, stomp.AckAuto, true)
+	//consumer, err := pubsub.NewConsumerByConfig(ctx, root.PubSubConsumer, true)
 	if err != nil {
 		logrus.Errorf("Can't new consumer: Error: %s", err.Error())
 		return nil, err
 	}
-	producer, err := pubsub.NewProducerByConfig(ctx, root.PubSubProducer)
+	producer, err := amq.NewProducerByConfig(root.Amq, "")
+	// producer, err := pubsub.NewProducerByConfig(ctx, root.PubSubProducer)
 	if err != nil {
 		logrus.Errorf("Can't new producer: Error: %s", err.Error())
 		return nil, err
@@ -54,21 +56,9 @@ func NewApplicationContext(ctx context.Context, root Root) (*ApplicationContext,
 	// consumerCaller := mq.NewBatchConsumerCaller(batchWorker, nil)
 
 	mongoHealthService := mongo.NewDefaultMongoHealthService(mongoDb)
-	subHealthService := pubsub.NewPubSubHealthService(
-		"pubsubSubscriber",
-		consumer.Client,
-		10 * time.Second,
-		pubsub.PermissionSubscribe,
-		root.PubSubConsumer.SubscriptionId,
-	)
-	pubHealthService := pubsub.NewPubSubHealthService(
-		"pubsubPublisher",
-		producer.Client,
-		10 * time.Second,
-		pubsub.PermissionPublish,
-		root.PubSubConsumer.SubscriptionId,
-	)
-	healthServices := []health.HealthService{mongoHealthService, subHealthService, pubHealthService}
+	consumerHealthService := amq.NewAMQHealthService(consumer.Conn, "amqConsumer", "")
+	producerHealthService := amq.NewAMQHealthService(consumer.Conn, "amqProducer", "")
+	healthServices := []health.HealthService{mongoHealthService, consumerHealthService, producerHealthService}
 	healthController := health.NewHealthController(healthServices)
 	return &ApplicationContext{
 		Consumer:         consumer,

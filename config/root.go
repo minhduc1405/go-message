@@ -1,18 +1,17 @@
 package config
 
 import (
+	"github.com/common-go/amq"
 	"github.com/common-go/log"
 	"github.com/common-go/mongo"
 	"github.com/common-go/mq"
-	"github.com/common-go/pubsub"
 )
 
 type Root struct {
 	Server            ServerConfig          `mapstructure:"server"`
 	Log               log.Config            `mapstructure:"log"`
 	Mongo             mongo.MongoConfig     `mapstructure:"mongo"`
-	PubSubConsumer    pubsub.ConsumerConfig `mapstructure:"pubsub_consumer"`
-	PubSubProducer    pubsub.ProducerConfig `mapstructure:"pubsub_producer"`
+	Amq               amq.Config            `mapstructure:"amq"`
 	BatchWorkerConfig mq.BatchWorkerConfig  `mapstructure:"batch_worker"`
 }
 
