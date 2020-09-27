@@ -1,0 +1,38 @@
+server:
+  name: go-message
+  port: 8080
+
+log:
+  level: debug
+  field_map:
+    time: "@timestamp"
+    msg: message
+
+mongo:
+  uri: mongodb://@localhost:27017
+  database: master_data
+
+batch_worker:
+  batch_size: 1000
+  timeout: 10
+  limit_retry: 3
+
+pubsub_consumer:
+  client:
+    project_id: dummy-project
+    key_filename: configs/key.json
+  subscription_id: sub-user
+  subscription:
+    max_outstanding_messages: 10000000
+    num_goroutines: 5
+
+pubsub_producer:
+  client:
+    project_id: dummy-project
+    key_filename: configs/key.json
+  topic_id: my-topic
+  topic:
+    delay_threshold: 100
+    count_threshold: 1
+    byte_threshold: 1000000
+    num_goroutines: 1
