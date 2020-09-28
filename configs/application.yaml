@@ -13,26 +13,27 @@ mongo:
   database: master_data
 
 batch_worker:
-  batch_size: 1000
+  batch_size: 1
   timeout: 10
   limit_retry: 3
 
-pubsub_consumer:
+kafka_consumer:
+  brokers: tricycle-01.srvs.cloudkafka.com:9094
   client:
-    project_id: dummy-project
-    key_filename: configs/key.json
-  subscription_id: sub-user
-  subscription:
-    max_outstanding_messages: 10000000
-    num_goroutines: 5
+    username: ah1t9hk0
+    password: QvMB75cxJ48KYRnGfwXcRNxzALyAeb7-
+  group_id: my-group
+  topic: ah1t9hk0-default
+  min_bytes: 0
+  max_bytes: 10485760
+  commit_interval: 1000
 
-pubsub_producer:
+kafka_producer:
+  brokers:
+    - tricycle-01.srvs.cloudkafka.com:9094
+    - tricycle-02.srvs.cloudkafka.com:9094
+    - tricycle-03.srvs.cloudkafka.com:9094
   client:
-    project_id: dummy-project
-    key_filename: configs/key.json
-  topic_id: my-topic
-  topic:
-    delay_threshold: 100
-    count_threshold: 1
-    byte_threshold: 1000000
-    num_goroutines: 1
+    username: ah1t9hk0
+    password: QvMB75cxJ48KYRnGfwXcRNxzALyAeb7-
+  topic: ah1t9hk0-default

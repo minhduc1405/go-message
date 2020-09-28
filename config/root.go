@@ -1,18 +1,18 @@
 package config
 
 import (
+	"github.com/common-go/kafka"
 	"github.com/common-go/log"
 	"github.com/common-go/mongo"
 	"github.com/common-go/mq"
-	"github.com/common-go/pubsub"
 )
 
 type Root struct {
 	Server            ServerConfig          `mapstructure:"server"`
 	Log               log.Config            `mapstructure:"log"`
 	Mongo             mongo.MongoConfig     `mapstructure:"mongo"`
-	PubSubConsumer    pubsub.ConsumerConfig `mapstructure:"pubsub_consumer"`
-	PubSubProducer    pubsub.ProducerConfig `mapstructure:"pubsub_producer"`
+	KafkaConsumer     kafka.ConsumerConfig  `mapstructure:"kafka_consumer"`
+	KafkaProducer     kafka.ProducerConfig  `mapstructure:"kafka_producer"`
 	BatchWorkerConfig mq.BatchWorkerConfig  `mapstructure:"batch_worker"`
 }
 

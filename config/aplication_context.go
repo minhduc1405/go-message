@@ -2,16 +2,14 @@ package config
 
 import (
 	"context"
-	"reflect"
-	"time"
-
 	"github.com/common-go/health"
+	"github.com/common-go/kafka"
 	"github.com/common-go/mongo"
 	"github.com/common-go/mq"
-	"github.com/common-go/pubsub"
 	v "github.com/common-go/validator"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/go-playground/validator.v9"
+	"reflect"
 )
 
 type ApplicationContext struct {
@@ -28,12 +26,18 @@ func NewApplicationContext(ctx context.Context, root Root) (*ApplicationContext,
 		return nil, err
 	}
 
-	consumer, err := pubsub.NewConsumerByConfig(ctx, root.PubSubConsumer, true)
+	//_, err2 := kafka.NewConnect(root.KafkaConsumer, root.KafkaConsumer.Brokers[0])
+	//if err2 != nil {
+	//	logrus.Errorf("Can't connect Kafka: Error: %s", err.Error())
+	//	return nil, err2
+	//}
+
+	consumer, err := kafka.NewConsumerByConfig(root.KafkaConsumer, true)
 	if err != nil {
 		logrus.Errorf("Can't new consumer: Error: %s", err.Error())
 		return nil, err
 	}
-	producer, err := pubsub.NewProducerByConfig(ctx, root.PubSubProducer)
+	producer, err := kafka.NewProducerByConfig(root.KafkaProducer, true)
 	if err != nil {
 		logrus.Errorf("Can't new producer: Error: %s", err.Error())
 		return nil, err
@@ -54,21 +58,11 @@ func NewApplicationContext(ctx context.Context, root Root) (*ApplicationContext,
 	// consumerCaller := mq.NewBatchConsumerCaller(batchWorker, nil)
 
 	mongoHealthService := mongo.NewDefaultMongoHealthService(mongoDb)
-	subHealthService := pubsub.NewPubSubHealthService(
-		"pubsubSubscriber",
-		consumer.Client,
-		10 * time.Second,
-		pubsub.PermissionSubscribe,
-		root.PubSubConsumer.SubscriptionId,
+	subHealthService := kafka.NewKafkaHealthService(
+		root.KafkaConsumer.Brokers,
+		"kafka",
 	)
-	pubHealthService := pubsub.NewPubSubHealthService(
-		"pubsubPublisher",
-		producer.Client,
-		10 * time.Second,
-		pubsub.PermissionPublish,
-		root.PubSubConsumer.SubscriptionId,
-	)
-	healthServices := []health.HealthService{mongoHealthService, subHealthService, pubHealthService}
+	healthServices := []health.HealthService{mongoHealthService, subHealthService}
 	healthController := health.NewHealthController(healthServices)
 	return &ApplicationContext{
 		Consumer:         consumer,
@@ -80,10 +74,10 @@ func NewApplicationContext(ctx context.Context, root Root) (*ApplicationContext,
 
 func NewUserValidator() v.Validator {
 	validator := v.NewDefaultValidator()
-	validator.CustomValidateList = append(validator.CustomValidateList, v.CustomValidate{Fn: CheckFlag1, Tag: "active"})
+	validator.CustomValidateList = append(validator.CustomValidateList, v.CustomValidate{Fn: CheckActive, Tag: "active"})
 	return validator
 }
 
-func CheckFlag1(fl validator.FieldLevel) bool {
+func CheckActive(fl validator.FieldLevel) bool {
 	return fl.Field().Bool()
 }
