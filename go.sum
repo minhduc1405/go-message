@@ -32,6 +32,8 @@ github.com/common-go/health v1.1.4/go.mod h1:GFbpmNEjkv3GPiVsp+qE9W3RK2n4IP3CzKp
 github.com/common-go/kafka v0.0.0-20200624092652-e95fdf0dc877 h1:1EWyAvRNiNhvzzhbdvdqXtEIE6SYLpE9NsDXjBUL6jQ=
 github.com/common-go/kafka v0.0.0-20200624092652-e95fdf0dc877/go.mod h1:68LIhERpXTFNM8YTgzaOU5nOWrbXN8sswYFNEVmIfxU=
 github.com/common-go/kafka v0.0.0-20200928111542-fb05dff415fc/go.mod h1:68LIhERpXTFNM8YTgzaOU5nOWrbXN8sswYFNEVmIfxU=
+github.com/common-go/kafka v0.0.0-20200929021854-15b787e74e76 h1:uzVpNO0+gG2ZDHNaXxiIYBs4WnLIWBUX7GIIzFJHeDY=
+github.com/common-go/kafka v0.0.0-20200929021854-15b787e74e76/go.mod h1:68LIhERpXTFNM8YTgzaOU5nOWrbXN8sswYFNEVmIfxU=
 github.com/common-go/log v0.0.0-20200925111248-88db1afbbdec h1:4RBoGs9JWNLzgPLxUT0Qy52RVxWZGLaNSZKtE1dNbUE=
 github.com/common-go/log v0.0.0-20200925111248-88db1afbbdec/go.mod h1:HSl/t/UyTyEfdQT5q5xu0KhM8i23+oNRCQu9HKR12EQ=
 github.com/common-go/mongo v1.0.16 h1:8wjucqrGHnmGd3z/0CnB1mlwLkTDNId/JN4P6YI+6bc=
@@ -202,6 +204,8 @@ github.com/rogpeppe/fastuuid v0.0.0-20150106093220-6724a57986af/go.mod h1:XWv6So
 github.com/rogpeppe/go-internal v1.1.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.2.2/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
+github.com/segmentio/kafka-go v0.3.8 h1:ifZPuUS3nROIy0gFxq4lwxNiar6oby+poAZilOXE7kY=
+github.com/segmentio/kafka-go v0.3.8/go.mod h1:8rEphJEczp+yDE/R5vwmaqZgF1wllrl4ioQcNKB8wVA=
 github.com/segmentio/kafka-go v0.4.2 h1:QXZ6q9Bu1JkAJQ/CQBb2Av8pFRG8LQ0kWCrLXgQyL8c=
 github.com/segmentio/kafka-go v0.4.2/go.mod h1:Inh7PqOsxmfgasV8InZYKVXWsdjcCq2d9tFV75GLbuM=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
