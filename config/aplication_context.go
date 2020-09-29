@@ -4,11 +4,14 @@ import (
 	"context"
 	"github.com/common-go/health"
 	"github.com/common-go/kafka"
-	"github.com/common-go/mongo"
 	"github.com/common-go/mq"
+	"github.com/common-go/sql"
 	v "github.com/common-go/validator"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/go-playground/validator.v9"
+	"log"
+	"os"
 	"reflect"
 )
 
@@ -20,12 +23,13 @@ type ApplicationContext struct {
 }
 
 func NewApplicationContext(ctx context.Context, root Root) (*ApplicationContext, error) {
-	mongoDb, err := mongo.SetupMongo(ctx, root.Mongo)
+	msqldb, err := sql.Connect(root.Sql.Dialect, root.Sql.Uri)
+	msqldb.SetLogger(log.New(os.Stdout, "\r\n", 0))
+
 	if err != nil {
-		logrus.Errorf("Can't connect mongoDB: Error: %s", err.Error())
+		logrus.Errorf("Can't connect mysql: Error: %s", err.Error())
 		return nil, err
 	}
-
 	//_, err2 := kafka.NewConnect(root.KafkaConsumer, root.KafkaConsumer.Brokers[0])
 	//if err2 != nil {
 	//	logrus.Errorf("Can't connect Kafka: Error: %s", err.Error())
@@ -44,7 +48,7 @@ func NewApplicationContext(ctx context.Context, root Root) (*ApplicationContext,
 	}
 
 	userTypeOf := reflect.TypeOf(User{})
-	bulkWriter := mongo.NewMongoBatchInsert(mongoDb, "users")
+	bulkWriter := sql.NewSqlBatchInsert(msqldb, "users")
 	//bulkWriter := mongo.NewMongoBatchUpdate(mongoDb, "users", userTypeOf)
 	//bulkWriter := writer.NewMongoBatchWriter(mongoDb, "users", userTypeOf)
 	batchHandler := mq.NewBatchHandler(userTypeOf, bulkWriter)
@@ -57,12 +61,12 @@ func NewApplicationContext(ctx context.Context, root Root) (*ApplicationContext,
 	consumerCaller := mq.NewBatchConsumerCaller(batchWorker, validator)
 	// consumerCaller := mq.NewBatchConsumerCaller(batchWorker, nil)
 
-	mongoHealthService := mongo.NewDefaultMongoHealthService(mongoDb)
+	mysqlHealthService := sql.NewDefaultSqlHealthService(msqldb, true, "")
 	subHealthService := kafka.NewKafkaHealthService(
 		root.KafkaConsumer.Brokers,
 		"kafka",
 	)
-	healthServices := []health.HealthService{mongoHealthService, subHealthService}
+	healthServices := []health.HealthService{mysqlHealthService, subHealthService}
 	healthController := health.NewHealthController(healthServices)
 	return &ApplicationContext{
 		Consumer:         consumer,
