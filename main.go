@@ -9,7 +9,7 @@ import (
 	"os"
 	"strconv"
 
-	c "go-message/config"
+	c "go-message/internal"
 )
 
 func main() {
