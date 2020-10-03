@@ -1,4 +1,4 @@
-package config
+package internal
 
 import (
 	"context"
@@ -70,10 +70,10 @@ func NewApplicationContext(ctx context.Context, root Root) (*ApplicationContext,
 
 func NewUserValidator() v.Validator {
 	validator := v.NewDefaultValidator()
-	validator.CustomValidateList = append(validator.CustomValidateList, v.CustomValidate{Fn: CheckFlag1, Tag: "active"})
+	validator.CustomValidateList = append(validator.CustomValidateList, v.CustomValidate{Fn: CheckActive, Tag: "active"})
 	return validator
 }
 
-func CheckFlag1(fl validator.FieldLevel) bool {
+func CheckActive(fl validator.FieldLevel) bool {
 	return fl.Field().Bool()
 }

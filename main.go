@@ -9,7 +9,7 @@ import (
 	"os"
 	"strconv"
 
-	c "go-message/config"
+	c "go-message/internal"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
 	env := os.Getenv("ENV")
 
 	var conf c.Root
-	er1 := config.LoadConfig(parentPath, resource, env, &conf, "application")
+	er1 := config.LoadConfig(parentPath, resource, env, &conf, "config")
 	if er1 != nil {
 		panic(er1)
 	}
